@@ -61,8 +61,8 @@ var agentLog = logrus.WithFields(logrus.Fields{
 	"pid":  os.Getpid(),
 })
 
-// Version is the agent version. This variable is populated at build time.
-var Version = "unknown"
+// version is the agent version. This variable is populated at build time.
+var version = "unknown"
 
 // This is the list of file descriptors we can properly close after the process
 // has been started. When the new process is exec(), those file descriptors are
@@ -232,7 +232,7 @@ func (s *sandbox) initLogger() error {
 	}
 	config.applyConfig()
 
-	agentLog.WithField("version", Version).Info()
+	agentLog.WithField("version", version).Info()
 
 	return nil
 }
@@ -287,7 +287,7 @@ func init() {
 		runtime.LockOSThread()
 		factory, _ := libcontainer.New("")
 		if err := factory.StartInitialization(); err != nil {
-			agentLog.Errorf("init went wrong: %v", err)
+			agentLog.WithError(err).Error("init failed")
 		}
 		panic("--this line should have never been executed, congratulations--")
 	}
